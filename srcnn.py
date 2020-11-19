@@ -29,8 +29,8 @@ def compute_maxpool_dim(dim_size):
 # f_1 = 9, f_2 = 1, f_3 = 5, n_1 = 64, n_2 = 32
 
 channels = 3 #trainset.data.shape[3] #change accordingly to the input
-height = 32 #trainset.data.shape[1] # change accordingly
-width = 32 #trainset.data.shape[2] # change accordingly
+height = 224 #trainset.data.shape[1] # change accordingly
+width = 224 #trainset.data.shape[2] # change accordingly
 stride = 1 # [stride_height, stride_width]
 
 n_1 = 64 # number of filters

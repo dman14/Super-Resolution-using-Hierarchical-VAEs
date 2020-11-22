@@ -18,16 +18,17 @@ def compute_maxpool_dim(dim_size):
 
 
 class CNN_SR(nn.Module):
-    def __init__(self, n_1 = 64, f_1 = 9, n_2 = 32, f_2 = 1, f_3 = 5):
+    def __init__(self, n_1 = 64, f_1 = 9, n_2 = 32, f_2 = 1, f_3 = 5,
+                channels = 3, height = 224, width = 224):
 
         super(CNN_SR, self).__init__()
 
         # Typical and basic setting according to the paper:
         # f_1 = 9, f_2 = 1, f_3 = 5, n_1 = 64, n_2 = 32
 
-        channels = 3 #trainset.data.shape[3] #change accordingly to the input
-        height = 32 #trainset.data.shape[1] # change accordingly
-        width = 32 #trainset.data.shape[2] # change accordingly
+        #channels = 3 #trainset.data.shape[3] #change accordingly to the input
+        #height = 32 #trainset.data.shape[1] # change accordingly
+        #width = 32 #trainset.data.shape[2] # change accordingly
         stride = 1 # [stride_height, stride_width]
 
         padding_1 = f_1 // 2 # to keep the same pixel size of the image (stride is 1 as well), // means floor

@@ -6,7 +6,7 @@ from torch import nn, optim
 from torch.autograd import Variable
 from torchvision import datasets, transforms
 import PIL.Image as pil_image
-
+    
 def test_network(net, trainloader):
 
     criterion = nn.MSELoss()
@@ -72,3 +72,12 @@ def rescale(image, scale=4):
   tensor_to_pil2 = transforms.ToPILImage()(pil_to_tensor2.squeeze_(0))
   lr = pil_to_tensor2
   return(hr,lr)
+
+def batchRescale(images=1, scale= 4):
+    lr_batch = []
+    for image in images:
+        lr_batch.append(rescale(image,scale=4))
+    
+    return lr_batch
+
+

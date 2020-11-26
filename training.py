@@ -209,5 +209,6 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
                 validation_data[k] += [v.mean().item()]
         
         # Reproduce the figure from the begining of the notebook, plot the training curves and show latent samples
-        make_vae_plots(vae, x, y, outputs, training_data, validation_data)
+        #make_vae_plots(vae, x, y, outputs, training_data, validation_data)
+        print("epoch:",epoch)
     return vae

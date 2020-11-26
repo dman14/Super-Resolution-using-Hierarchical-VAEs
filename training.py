@@ -1,8 +1,18 @@
-import torch.optim as optim
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 
-training_init():
+import numpy as np
+import torch
+from torch.autograd import Variable
+from torch.nn.parameter import Parameter
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+import torch.nn.init as init
+from torch.nn import Linear, Conv2d, BatchNorm2d, MaxPool2d, Dropout2d
+from torch.nn.functional import relu, elu, relu6, sigmoid, tanh, softmax
+
+def training_init(net):
 
     # if you want L2 regularization, then add weight_decay to SGD
     optimizer = optim.SGD(net.parameters(), lr=0.025)
@@ -14,7 +24,7 @@ training_init():
 
 def test_network(net, trainloader):
 
-    optimizer, loss_function = training_init()
+    optimizer, loss_function = training_init(net)
 
 
     dataiter = iter(trainloader)
@@ -35,15 +45,21 @@ def test_network(net, trainloader):
 
     return True
 
-def training(net, num_epochs = 100, ):
+def training(net, train_loader, test_loader, num_epochs = 100 ):
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    print(f">>using device: {device}")
+
 
     train_loss = []
     valid_loss = []
 
-    optimizer, loss_function = training_init()
+    optimizer, loss_function = training_init(net)
+    net = net.to(device)
     
 
-    for epoch in range(num_epochs, train_loader):
+    for epoch in range(num_epochs):
         batch_loss = []
         net.train()
         
@@ -51,14 +67,12 @@ def training(net, num_epochs = 100, ):
         # Note that y is not necessarily known as it is here
         for x, y in train_loader:
             
-            if cuda:
-                x = x.cuda()
+            x = x.to(device)
             
             outputs = net(x)
-            x_hat = outputs['x_hat']
 
             # note, target is the original tensor, as we're working with auto-encoders
-            loss = loss_function(x_hat, x)
+            loss = loss_function(outputs, y)
             
             optimizer.zero_grad()
             loss.backward()
@@ -75,15 +89,14 @@ def training(net, num_epochs = 100, ):
             # Just load a single batch from the test loader
             x, y = next(iter(test_loader))
             
-            if cuda:
-                x = x.cuda()
+            x = x.to(device)
             
             outputs = net(x)
 
             # We save the latent variable and reconstruction for later use
             # we will need them on the CPU to plot
-            x_hat = outputs['x_hat']
-            z = outputs['z'].cpu().numpy()
+            x_hat = outputs
+            #z = outputs['z'].cpu().numpy()
 
             loss = loss_function(x_hat, x)
 
@@ -91,16 +104,19 @@ def training(net, num_epochs = 100, ):
         
         if epoch == 0:
             continue
-
         # live plotting of the trainig curves and representation
-        plot_autoencoder_stats(x=x.cpu(),
-                            x_hat=x_hat.cpu(),
-                            z=z,
-                            y=y,
-                            train_loss=train_loss,
-                            valid_loss=valid_loss,
-                            epoch=epoch,
-                            classes=classes,
-                            dimensionality_reduction_op = None) #lambda z: TSNE(n_components=2).fit_transform(z))
+        #plot_autoencoder_stats(x=x.cpu(),
+        #                    x_hat=x_hat.cpu(),
+        #                    z=z,
+        #                    y=y,
+        #                    train_loss=train_loss,
+        #                    valid_loss=valid_loss,
+        #                    epoch=epoch,
+        #                    classes=classes,
+        #                    dimensionality_reduction_op = None) #lambda z: TSNE(n_components=2).fit_transform(z))
+
+    print(train_loss)
+    print(valid_loss)
+    return net
         
     

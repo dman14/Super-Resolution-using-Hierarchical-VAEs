@@ -7,30 +7,6 @@ from torch.autograd import Variable
 from torchvision import datasets, transforms
 import PIL.Image as pil_image
     
-def test_network(net, trainloader):
-
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(net.parameters(), lr=0.001)
-
-    dataiter = iter(trainloader)
-    images, labels = dataiter.next()
-
-    # Create Variables for the inputs and targets
-    inputs = Variable(images)
-    targets = Variable(images)
-
-    # Clear the gradients from all Variables
-    optimizer.zero_grad()
-
-    # Forward pass, then backward pass, then update weights
-    output = net.forward(inputs)
-    loss = criterion(output, targets)
-    loss.backward()
-    optimizer.step()
-
-    return True
-
-
 def imshow(image, ax=None, title=None, normalize=True):
     """Imshow for Tensor."""
     if ax is None:

@@ -7,7 +7,7 @@ from torch.autograd import Variable
 from torchvision import datasets, transforms
 import PIL.Image as pil_image
     
-def imshow(image, ax=None, title=None, normalize=True):
+def imshow(image, ax=None, title=None, normalize=False):
     """Imshow for Tensor."""
     if ax is None:
         fig, ax = plt.subplots()
@@ -47,13 +47,7 @@ def rescale(image, scale=4):
   pil_to_tensor2 = transforms.ToTensor()(lr).unsqueeze_(0)
   tensor_to_pil2 = transforms.ToPILImage()(pil_to_tensor2.squeeze_(0))
   lr = pil_to_tensor2
-  return(hr,lr)
+  return(lr,hr)
 
-def batchRescale(images=1, scale= 4):
-    lr_batch = []
-    for image in images:
-        lr_batch.append(rescale(image,scale=4))
-    
-    return lr_batch
 
 

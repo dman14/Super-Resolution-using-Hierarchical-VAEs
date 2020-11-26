@@ -51,7 +51,7 @@ def test_network(net, trainloader):
 
     return True
 
-def training(net, train_loader, test_loader, num_epochs = 100 ):
+def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -122,10 +122,9 @@ def training(net, train_loader, test_loader, num_epochs = 100 ):
         #                    epoch=epoch,
         #                    classes=classes,
         #                    dimensionality_reduction_op = None) #lambda z: TSNE(n_components=2).fit_transform(z))
-        print("on epoch:",epoch)
+        print("on epoch:",epoch,"training loss:"train_loss[-1],"and validation loss:",valid_loss[-1])
 
     print(train_loss)
     print(valid_loss)
     return net
         
-    

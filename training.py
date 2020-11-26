@@ -74,6 +74,7 @@ def training(net, train_loader, test_loader, num_epochs = 100 ):
         for x, y in train_loader:
             
             x = x.to(device)
+            y = y.to(device)
             
             outputs = net(x)
 
@@ -96,6 +97,7 @@ def training(net, train_loader, test_loader, num_epochs = 100 ):
             x, y = next(iter(test_loader))
             
             x = x.to(device)
+            y = y.to(device)
             
             outputs = net(x)
 

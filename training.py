@@ -24,11 +24,17 @@ def training_init(net):
 
 def test_network(net, trainloader):
 
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    net = net.to(device)
+
     optimizer, loss_function = training_init(net)
 
 
     dataiter = iter(trainloader)
     images, labels = dataiter.next()
+
+    images = images.to(device)
 
     # Create Variables for the inputs and targets
     inputs = Variable(images)
@@ -101,7 +107,7 @@ def training(net, train_loader, test_loader, num_epochs = 100 ):
             loss = loss_function(x_hat, x)
 
             valid_loss.append(loss.item())
-        
+
         if epoch == 0:
             continue
         # live plotting of the trainig curves and representation
@@ -114,6 +120,7 @@ def training(net, train_loader, test_loader, num_epochs = 100 ):
         #                    epoch=epoch,
         #                    classes=classes,
         #                    dimensionality_reduction_op = None) #lambda z: TSNE(n_components=2).fit_transform(z))
+        print("on epoch:",epoch)
 
     print(train_loss)
     print(valid_loss)

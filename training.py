@@ -201,7 +201,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
             x = x.to(device)
             
             # perform a forward pass through the model and compute the ELBO
-            loss, diagnostics, outputs = vi(vae, x)
+            loss, diagnostics, outputs = vi(vae, x, y)
             
             # gather data for the validation step
             for k, v in diagnostics.items():

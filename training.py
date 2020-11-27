@@ -199,6 +199,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
             # Just load a single batch from the test loader
             x, y = next(iter(test_loader))
             x = x.to(device)
+            y = y.to(device)
             
             # perform a forward pass through the model and compute the ELBO
             loss, diagnostics, outputs = vi(vae, x, y)

@@ -13,8 +13,7 @@ from torch.nn import Linear, Conv2d, BatchNorm2d, MaxPool2d, Dropout2d
 from torch.nn.functional import relu, elu, relu6, sigmoid, tanh, softmax
 from collections import defaultdict
 
-from git.vae import *
-from git.plotting import *
+from git.vae_sr import *
 
 def training_init(net):
 
@@ -178,7 +177,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
             y = y.to(device)
             
             # perform a forward pass through the model and compute the ELBO
-            loss, diagnostics, outputs = vi(vae, x)
+            loss, diagnostics, outputs = vi(vae, x , y)
             
             optimizer.zero_grad()
             loss.backward()

@@ -10,7 +10,6 @@ import numpy as np
 # %matplotlib inline
 import pandas as pd
 
-
 import math 
 import torch
 from torch import nn, Tensor
@@ -101,6 +100,22 @@ class VariationalAutoencoder(nn.Module):
             nn.ReLU(),
             nn.Linear(in_features=512, out_features=self.observation_features)
         )
+
+        # Prior for SR
+        self.prior_nn = nn.Sequential(
+            nn.Linear(in_features=self.observation_features, out_features=512),
+            nn.ReLU(),
+            nn.Linear(in_features=512, out_features=256),
+            nn.ReLU(),
+            nn.Linear(in_features=256, out_features=128),
+            nn.ReLU(),
+            nn.Linear(in_features = 128, out_features = 64),
+            nn.ReLU(),
+            nn.Linear(in_features = 64, out_features = 32),
+            nn.ReLU(),
+            # A Gaussian is fully characterised by its mean \mu and variance \sigma**2
+            nn.Linear(in_features=32, out_features=2) #
+        )
         
         # define the parameters of the prior, chosen as p(z) = N(0, I)
         self.register_buffer('prior_params', torch.zeros(torch.Size([1, 2*latent_features])))
@@ -122,6 +137,14 @@ class VariationalAutoencoder(nn.Module):
         
         # return the distribution `p(z)`
         return ReparameterizedDiagonalGaussian(mu, log_sigma)
+
+    def prior_sr(self, y:Tensor) -> Distribution:
+        h_y = self.prior_nn(y)
+        mu, log_sigma = h_y.chunk(2, dim=-1)
+        
+        # return the distribution `p(z)`
+        return ReparameterizedDiagonalGaussian(mu, log_sigma)
+
     
     def observation_model(self, z:Tensor) -> Distribution:
         """return the distribution `p(x|z)`"""
@@ -130,17 +153,21 @@ class VariationalAutoencoder(nn.Module):
         return Bernoulli(logits=px_logits)
         
 
-    def forward(self, x) -> Dict[str, Any]:
+    def forward(self, x, y) -> Dict[str, Any]:
         """compute the posterior q(z|x) (encoder), sample z~q(z|x) and return the distribution p(x|z) (decoder)"""
 
         # flatten the input
         x = x.view(x.size(0), -1)
+        y = y.view(y.size(0), -1)
 
         # define the posterior q(z|x) / encode x into q(z|x)
         qz = self.posterior(x)
         
         # define the prior p(z)
-        pz = self.prior(batch_size=x.size(0))
+        #pz = self.prior(batch_size=x.size(0))
+
+        # p(z|y) = 
+        pz= self.prior_sr(y)
 
         # sample the posterior using the reparameterization trick: z ~ q(z | x)
         z = qz.rsample()
@@ -179,10 +206,10 @@ class VariationalInference(nn.Module):
         super().__init__()
         self.beta = beta
         
-    def forward(self, model:nn.Module, x:Tensor) -> Tuple[Tensor, Dict]:
+    def forward(self, model:nn.Module, x:Tensor, y:Tensor) -> Tuple[Tensor, Dict]:
         
         # forward pass through the model
-        outputs = model(x)
+        outputs = model(x,y)
         
         # unpack outputs
         px, pz, qz, z = [outputs[k] for k in ["px", "pz", "qz", "z"]]

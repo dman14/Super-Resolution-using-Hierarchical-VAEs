@@ -178,11 +178,11 @@ class VariationalAutoencoder(nn.Module):
         return {'px': px, 'pz': pz, 'qz': qz, 'z': z}
     
     
-    def sample_from_prior(self, batch_size:int=100):
+    def sample_from_prior(self, y):
         """sample z~p(z) and return p(x|z)"""
         
         # define the prior p(z)
-        pz = self.prior(batch_size=batch_size)
+        pz = self.prior_sr(y)
         
         # sample the prior 
         z = pz.rsample()
@@ -191,6 +191,7 @@ class VariationalAutoencoder(nn.Module):
         px = self.observation_model(z)
         
         return {'px': px, 'pz': pz, 'z': z}
+
 
 
 # latent_features = 2

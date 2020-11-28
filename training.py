@@ -137,7 +137,7 @@ def vae_init(dataloader):
     images, low_res = next(iter(dataloader))
 
     # VAE
-    latent_features = 2
+    latent_features = 24
     vae = VariationalAutoencoder(images[0].shape, latent_features)
 
     # Evaluator: Variational Inference

@@ -16,6 +16,7 @@ from torch import nn, Tensor
 from torch.nn.functional import softplus
 from torch.distributions import Distribution
 from torch.distributions import Bernoulli
+from torch.distributions import Normal
 
 
 
@@ -151,6 +152,13 @@ class VariationalAutoencoder(nn.Module):
         px_logits = self.decoder(z)
         px_logits = px_logits.view(-1, *self.input_shape) # reshape the output to input_shape number of columns (rows are unspecified)
         return Bernoulli(logits=px_logits)
+
+    def observation_model_normal(self, z:Tensor) -> Distribution:
+        """return the distribution `p(x|z)`"""
+        h_z = self.decoder(z)
+        mu, log_sigma = h_z.chunk(2, dim =-1)
+
+        return ReparameterizedDiagonalGaussian(mu, log_sigma)
         
 
     def forward(self, x, y) -> Dict[str, Any]:
@@ -173,7 +181,7 @@ class VariationalAutoencoder(nn.Module):
         z = qz.rsample()
         
         # define the observation model p(x|z) = B(x | g(z))
-        px = self.observation_model(z)
+        px = self.observation_model_normal(z)
         
         return {'px': px, 'pz': pz, 'qz': qz, 'z': z}
     
@@ -190,7 +198,7 @@ class VariationalAutoencoder(nn.Module):
         z = pz.rsample()
         
         # define the observation model p(x|z) = B(x | g(z))
-        px = self.observation_model(z)
+        px = self.observation_model_normal(z)
         
         return {'px': px, 'pz': pz, 'z': z}
 

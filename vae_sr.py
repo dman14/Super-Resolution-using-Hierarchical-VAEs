@@ -99,7 +99,7 @@ class VariationalAutoencoder(nn.Module):
             nn.ReLU(),
             nn.Linear(in_features=256, out_features=512),
             nn.ReLU(),
-            nn.Linear(in_features=512, out_features=2*latent_features)
+            nn.Linear(in_features=512, out_features=self.observation_features*2)
         )
 
         # Prior for SR

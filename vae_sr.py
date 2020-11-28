@@ -209,20 +209,26 @@ class VariationalInference(nn.Module):
     def forward(self, model:nn.Module, x:Tensor, y:Tensor) -> Tuple[Tensor, Dict]:
         
         # forward pass through the model
-        outputs = model(y,x)
+        outputs = model(x,x)
+        outputs2= model(x,y)
         
         # unpack outputs
         px, pz, qz, z = [outputs[k] for k in ["px", "pz", "qz", "z"]]
+        px2, pz2, qz2, z2 = [outputs2[k] for k in ["px", "pz", "qz", "z"]]
         
         # evaluate log probabilities
         log_px = reduce(px.log_prob(x))
         log_pz = reduce(pz.log_prob(z))
         log_qz = reduce(qz.log_prob(z))
+
+        log_px2 = reduce(px2.log_prob(x))
+        log_pz2 = reduce(pz2.log_prob(z2))
+        log_qz2 = reduce(qz2.log_prob(z2))
         
         # compute the ELBO with and without the beta parameter: 
         # `L^\beta = E_q [ log p(x|z) - \beta * D_KL(q(z|x) | p(z))`
         # where `D_KL(q(z|x) | p(z)) = log q(z|x) - log p(z)`
-        kl = log_qz - log_pz
+        kl = log_qz - log_pz2
 
         # elbo = torch.mean(log_px) - kl # <- your code here
         # beta_elbo = torch.mean(log_px) - self.beta* kl # <- your code here

@@ -209,7 +209,7 @@ class VariationalInference(nn.Module):
     def forward(self, model:nn.Module, x:Tensor, y:Tensor) -> Tuple[Tensor, Dict]:
         
         # forward pass through the model
-        outputs = model(x,y)
+        outputs = model(y,x)
         
         # unpack outputs
         px, pz, qz, z = [outputs[k] for k in ["px", "pz", "qz", "z"]]

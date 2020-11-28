@@ -181,6 +181,8 @@ class VariationalAutoencoder(nn.Module):
     def sample_from_prior(self, y):
         """sample z~p(z) and return p(x|z)"""
         
+        y = y.view(y.size(0), -1)
+
         # define the prior p(z)
         pz = self.prior_sr(y)
         

@@ -156,9 +156,14 @@ class VariationalAutoencoder(nn.Module):
     def observation_model_normal(self, z:Tensor) -> Distribution:
         """return the distribution `p(x|z)`"""
         h_z = self.decoder(z)
-        h_z = h_z.view(-1, *self.input_shape)
+
         mu, log_sigma = h_z.chunk(2, dim =-1)
 
+        mu = mu.view(-1, *self.input_shape)
+        log_sigma = log_sigma.view(-1, *self.input_shape)
+
+        #sampled = sampled.view(-1,*self.input_shape)
+        
         return ReparameterizedDiagonalGaussian(mu, log_sigma)
         
 

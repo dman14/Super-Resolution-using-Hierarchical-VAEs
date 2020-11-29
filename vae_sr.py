@@ -140,7 +140,7 @@ class VariationalAutoencoder(nn.Module):
         return ReparameterizedDiagonalGaussian(mu, log_sigma)
 
     def prior_sr(self, y:Tensor) -> Distribution:
-        h_y = self.prior_nn(y)
+        h_y = self.encoder(y)
         mu, log_sigma = h_y.chunk(2, dim=-1)
         
         # return the distribution `p(z)`
@@ -182,6 +182,7 @@ class VariationalAutoencoder(nn.Module):
 
         # p(z|y) = 
         pz= self.prior_sr(y)
+
 
         # sample the posterior using the reparameterization trick: z ~ q(z | x)
         z = qz.rsample()

@@ -186,10 +186,9 @@ class VariationalAutoencoder(nn.Module):
 
         # sample the posterior using the reparameterization trick: z ~ q(z | x)
         z = qz.rsample()
-        z = z + zy
         
         # define the observation model p(x|z) = B(x | g(z))
-        px = self.observation_model_normal(z)
+        px = self.observation_model_normal(z+zy)
         
         return {'px': px, 'pz': pz, 'qz': qz, 'z': z}
     

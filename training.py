@@ -154,6 +154,7 @@ def vae_init(dataloader):
 
         
 def training_vae(train_loader, test_loader, num_epochs = 100 ):
+    a=0
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f">> Using device: {device}")
@@ -162,7 +163,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
 
     # move the model to the device
     vae = vae.to(device)
-
+    
     # training..
     epoch =0
     while epoch < num_epochs:
@@ -210,11 +211,11 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         
         # Reproduce the figure from the begining of the notebook, plot the training curves and show latent samples
         #make_vae_plots(vae, x, y, outputs, training_data, validation_data)
-        if plt is None:
-            pass
-        else:
-            plt.clf()
-        fig, axes = plt.subplots(1, 2, figsize=(13,13), squeeze=False)
+        if a==0:
+            plt.ion()
+            fig, axes = plt.subplots(1, 2, figsize=(13,13), squeeze=False)
+            a=1
+            
         # plot ELBO
         ax = axes[0, 0]
         ax.set_title(r'ELBO: $\mathcal{L} ( \mathbf{x} )$')
@@ -228,5 +229,8 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         ax.plot(training_data['kl'], label='Training')
         ax.plot(validation_data['kl'], label='Validation')
         ax.legend()
+
+
+        fig.canvas.draw()
         #print("epoch:",epoch)
     return vae

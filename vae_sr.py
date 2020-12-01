@@ -99,7 +99,7 @@ class VariationalAutoencoder(nn.Module):
             nn.ReLU(),
             nn.Linear(in_features=256, out_features=512),
             nn.ReLU(),
-            nn.Linear(in_features=512, out_features=self.observation_features*2)
+            nn.Linear(in_features=512, out_features=self.observation_features)
         )
 
         # Prior for SR
@@ -188,7 +188,7 @@ class VariationalAutoencoder(nn.Module):
         z = qz.rsample()
         
         # define the observation model p(x|z) = B(x | g(z))
-        px = self.observation_model_normal(z)
+        px = self.observation_model(z)
         
         return {'px': px, 'pz': pz, 'qz': qz, 'z': z}
     

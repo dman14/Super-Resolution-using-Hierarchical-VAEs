@@ -188,7 +188,7 @@ class VariationalAutoencoder(nn.Module):
         z = qz.rsample()
         
         # define the observation model p(x|z) = B(x | g(z))
-        px = self.observation_model_normal(z.add(zy))
+        px = self.observation_model_normal(z)
         
         return {'px': px, 'pz': pz, 'qz': qz, 'z': z}
     

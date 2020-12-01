@@ -210,6 +210,10 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         
         # Reproduce the figure from the begining of the notebook, plot the training curves and show latent samples
         #make_vae_plots(vae, x, y, outputs, training_data, validation_data)
+        if plt is None:
+            pass:
+        else:
+            plt.clf()
         fig, axes = plt.subplots(1, 2, figsize=(13,13), squeeze=False)
         # plot ELBO
         ax = axes[0, 0]

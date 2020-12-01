@@ -210,5 +210,19 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         
         # Reproduce the figure from the begining of the notebook, plot the training curves and show latent samples
         #make_vae_plots(vae, x, y, outputs, training_data, validation_data)
-        print("epoch:",epoch)
+        fig, axes = plt.subplots(1, 2, figsize=(13,13), squeeze=False)
+        # plot ELBO
+        ax = axes[0, 0]
+        ax.set_title(r'ELBO: $\mathcal{L} ( \mathbf{x} )$')
+        ax.plot(training_data['elbo'], label='Training')
+        ax.plot(validation_data['elbo'], label='Validation')
+        ax.legend()
+
+        # plot KL
+        ax = axes[0, 1]
+        ax.set_title(r'$KL')
+        ax.plot(training_data['kl'], label='Training')
+        ax.plot(validation_data['kl'], label='Validation')
+        ax.legend()
+        #print("epoch:",epoch)
     return vae

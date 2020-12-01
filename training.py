@@ -215,20 +215,20 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
             plt.ion()
             fig, axes = plt.subplots(1, 2, figsize=(13,13), squeeze=False)
             a=1
+            ax = axes[0, 0]
+            ax2 = axes[0, 1]
             
         # plot ELBO
-        ax = axes[0, 0]
         ax.set_title(r'ELBO: $\mathcal{L} ( \mathbf{x} )$')
         ax.plot(training_data['elbo'], label='Training')
         ax.plot(validation_data['elbo'], label='Validation')
         ax.legend()
 
         # plot KL
-        ax = axes[0, 1]
-        ax.set_title(r'$KL')
-        ax.plot(training_data['kl'], label='Training')
-        ax.plot(validation_data['kl'], label='Validation')
-        ax.legend()
+        ax2.set_title(r'$KL')
+        ax2.plot(training_data['kl'], label='Training')
+        ax2.plot(validation_data['kl'], label='Validation')
+        ax2.legend()
 
 
         fig.canvas.draw()

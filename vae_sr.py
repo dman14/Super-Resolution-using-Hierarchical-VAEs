@@ -188,7 +188,7 @@ class VariationalAutoencoder(nn.Module):
         z = qz.rsample()
         
         # define the observation model p(x|z) = B(x | g(z))
-        px = self.observation_model(z)
+        px = self.observation_model(z+zy)
         
         return {'px': px, 'pz': pz, 'qz': qz, 'z': z}
     
@@ -220,7 +220,7 @@ def reduce(x:Tensor) -> Tensor:
     return x.view(x.size(0), -1).sum(dim=1)
 
 class VariationalInference(nn.Module):
-    def __init__(self, beta:float=1.):
+    def __init__(self, beta:float=0.95):
         super().__init__()
         self.beta = beta
         

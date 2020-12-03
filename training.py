@@ -12,6 +12,7 @@ import torch.nn.init as init
 from torch.nn import Linear, Conv2d, BatchNorm2d, MaxPool2d, Dropout2d
 from torch.nn.functional import relu, elu, relu6, sigmoid, tanh, softmax
 from collections import defaultdict
+from torch.utils.tensorboard import SummaryWriter
 
 from git.vae_sr import *
 
@@ -57,6 +58,11 @@ def test_network(net, trainloader):
 def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    tb = SummaryWriter()
+    images, labels,_ = next(iter(train_loader))
+    grid = torchvision.utils.make_grid(images)
+    tb.add_image("images", grid)
+    tb.add_graph(model, images)
 
     print(f">>using device: {device}")
 
@@ -92,6 +98,14 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
 
         train_loss.append(np.mean(batch_loss))
 
+
+        tb.add_scalar("Training Loss", train_loss, epoch)
+
+        tb.add_histogram("conv1.bias", net.conv_1.bias, epoch)
+        tb.add_histogram("conv1.weight", net.conv_1.weight, epoch)
+        tb.add_histogram("conv2.bias", net.conv_2.bias, epoch)
+        tb.add_histogram("conv2.weight", net.conv_2.weight, epoch)
+
         # Evaluate, do not propagate gradients
         with torch.no_grad():
             net.eval()
@@ -112,6 +126,7 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
             loss = loss_function(x_hat, x)
 
             valid_loss.append(loss.item())
+            tb.add_scalar("Validation Loss", valid_loss, epoch)
 
         if epoch == 0:
             continue
@@ -126,7 +141,7 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
         #                    classes=classes,
         #                    dimensionality_reduction_op = None) #lambda z: TSNE(n_components=2).fit_transform(z))
         print("on epoch:",epoch)#,"training loss:"train_loss[-1],"and validation loss:",valid_loss[-1])
-
+    tb.close()
     print(train_loss)
     print(valid_loss)
 
@@ -213,7 +228,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         #make_vae_plots(vae, x, y, outputs, training_data, validation_data)
         if a==0:
             plt.ion()
-            fig, axes = plt.subplots(1, 2, figsize=(13,13), squeeze=False)
+            fig, axes = plt.subplots(1, 2, figsize=(13,5), squeeze=False)
             a=1
             ax = axes[0, 0]
             ax2 = axes[0, 1]
@@ -230,7 +245,5 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         ax2.plot(validation_data['kl'], label='Validation')
         ax2.legend()
 
-
-        fig.canvas.draw()
         #print("epoch:",epoch)
     return vae

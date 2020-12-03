@@ -84,7 +84,7 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
         
         # Go through each batch in the training dataset using the loader
         # Note that y is not necessarily known as it is here
-        for x, y in train_loader:
+        for x, y, z in train_loader:
             
             x = x.to(device)
             y = y.to(device)
@@ -115,7 +115,7 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
             net.eval()
             
             # Just load a single batch from the test loader
-            x, y = next(iter(test_loader))
+            x, y, _ = next(iter(test_loader))
             
             x = x.to(device)
             y = y.to(device)
@@ -192,7 +192,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         
         # Go through each batch in the training dataset using the loader
         # Note that y is not necessarily known as it is here
-        for x, y in train_loader:
+        for x, y, z in train_loader:
             x = x.to(device)
             y = y.to(device)
             
@@ -217,7 +217,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
             vae.eval()
             
             # Just load a single batch from the test loader
-            x, y = next(iter(test_loader))
+            x, y, z = next(iter(test_loader))
             x = x.to(device)
             y = y.to(device)
             

@@ -13,6 +13,7 @@ from torch.nn import Linear, Conv2d, BatchNorm2d, MaxPool2d, Dropout2d
 from torch.nn.functional import relu, elu, relu6, sigmoid, tanh, softmax
 from collections import defaultdict
 from torch.utils.tensorboard import SummaryWriter
+import torchvision
 
 from git.vae_sr import *
 

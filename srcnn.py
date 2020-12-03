@@ -10,7 +10,7 @@ import torch.nn.init as init
 from torch.nn import Linear, Conv2d, BatchNorm2d, MaxPool2d, Dropout2d
 from torch.nn.functional import relu, elu, relu6, sigmoid, tanh, softmax
 from torch.utils.tensorboard import SummaryWriter
-
+from torchvision.utils import make_grid
 def compute_conv_dim(dim_size, kernel_size, padding, stride):
     return int((dim_size - kernel_size + 2 * padding) / stride + 1)
 

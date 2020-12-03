@@ -80,7 +80,7 @@ class CNN_SR(nn.Module):
 
 
          #-------------------------------------------------------------------
-        self.conv_4   = Conv2d(in_channels=channels,
+        self.conv_4   = Conv2d(in_channels=n_2,
                                out_channels=n_1,
                                kernel_size=f_1,
                                stride=1,
@@ -110,17 +110,17 @@ class CNN_SR(nn.Module):
         #------------------------------------------------------------------------------
 
 
-        self.deconv_2   = ConvTranspose2d(in_channels=n_2,
+        self.deconv_2   = ConvTranspose2d(in_channels=channels,
                                 out_channels=n_1,
                                 kernel_size=f_2,
                                 stride=stride,
                                 padding=padding_2, output_padding=1)
-        self.deconv1_out_height = compute_deconv_dim(self.deconv1_out_height, f_2, padding_2, stride)
-        self.deconv1_out_width = compute_deconv_dim(self.deconv1_out_width, f_2, padding_2, stride) 
+        self.deconv2_out_height = compute_deconv_dim(self.conv6_out_height, f_2, padding_2, stride)
+        self.deconv2_out_width = compute_deconv_dim(self.conv6_out_width, f_2, padding_2, stride) 
 
 
          #-------------------------------------------------------------------
-        self.conv_7   = Conv2d(in_channels=channels,
+        self.conv_7   = Conv2d(in_channels=n_1,
                                out_channels=n_1,
                                kernel_size=f_1,
                                stride=1,
@@ -150,13 +150,13 @@ class CNN_SR(nn.Module):
         #------------------------------------------------------------------------------
 
 
-        self.deconv_3   = ConvTranspose2d(in_channels=n_1,
+        self.deconv_3   = ConvTranspose2d(in_channels=channels,
                                 out_channels=channels,
                                 kernel_size=f_1,
                                 stride=stride,
                                 padding=padding_1, output_padding= 1)
-        self.deconv1_out_height = compute_deconv_dim(self.deconv1_out_height, f_1, padding_1, stride)
-        self.deconv1_out_width = compute_deconv_dim(self.deconv1_out_width, f_1, padding_1, stride)
+        self.deconv3_out_height = compute_deconv_dim(self.conv9_out_height, f_1, padding_1, stride)
+        self.deconv3_out_width = compute_deconv_dim(self.conv9_out_height, f_1, padding_1, stride)
 
 
         #-------------------------------------------------------------------

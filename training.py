@@ -86,7 +86,7 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
         # Note that y is not necessarily known as it is here
         for x, y, z in train_loader:
             
-            x = x.to(device)
+            x = z.to(device)
             y = y.to(device)
             
             outputs = net(x)
@@ -115,9 +115,9 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
             net.eval()
             
             # Just load a single batch from the test loader
-            x, y, _ = next(iter(test_loader))
+            x, y, z = next(iter(test_loader))
             
-            x = x.to(device)
+            x = z.to(device)
             y = y.to(device)
             
             outputs = net(x)
@@ -182,6 +182,15 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
 
     # move the model to the device
     vae = vae.to(device)
+
+
+    tb = SummaryWriter()
+    images, labels,_ = next(iter(train_loader))
+    images = images.to(device)
+    labels = labels.to(device)
+    grid = make_grid(images)
+    tb.add_image("images", grid)
+    tb.add_graph(vae, images)
     
     # training..
     epoch =0
@@ -236,18 +245,11 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
             a=1
             ax = axes[0, 0]
             ax2 = axes[0, 1]
-            
-        # plot ELBO
-        ax.set_title(r'ELBO: $\mathcal{L} ( \mathbf{x} )$')
-        ax.plot(training_data['elbo'], label='Training')
-        ax.plot(validation_data['elbo'], label='Validation')
-        ax.legend()
 
-        # plot KL
-        ax2.set_title(r'$KL')
-        ax2.plot(training_data['kl'], label='Training')
-        ax2.plot(validation_data['kl'], label='Validation')
-        ax2.legend()
+        tb.add_scalar("Training Loss", training_data['elbo'][-1], epoch)
+        tb.add_scalar("Training Loss", training_data['kl'][-1], epoch)
+        tb.add_scalar("Training Loss", validation_data['elbo'][-1], epoch)
+        tb.add_scalar("Training Loss", validation_data['kl'][-1], epoch)
 
-        #print("epoch:",epoch)
+        print("epoch:",epoch)
     return vae

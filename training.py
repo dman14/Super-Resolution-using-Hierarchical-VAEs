@@ -90,7 +90,6 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
             y = y.to(device)
             
             outputs = net(x)
-            print('outputs = ', outputs.shape)
 
             # note, target is the original tensor, as we're working with auto-encoders
             loss = loss_function(outputs, y)

@@ -61,12 +61,12 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     tb = SummaryWriter()
-    images, labels,_ = next(iter(train_loader))
-    images = images.to(device)
-    labels = labels.to(device)
-    grid = make_grid(images)
-    tb.add_image("images", grid)
-    tb.add_graph(net, images)
+    #images, labels = next(iter(train_loader))
+    #images = images.to(device)
+    #labels = labels.to(device)
+    #grid = make_grid(images)
+    #tb.add_image("images", grid)
+    #tb.add_graph(net, images)
 
     print(f">>using device: {device}")
 
@@ -84,12 +84,13 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
         
         # Go through each batch in the training dataset using the loader
         # Note that y is not necessarily known as it is here
-        for x, y, z in train_loader:
+        for x, y in train_loader:
             
-            x = z.to(device)
+            x = x.to(device)
             y = y.to(device)
             
             outputs = net(x)
+            print('outputs = ', outputs.shape)
 
             # note, target is the original tensor, as we're working with auto-encoders
             loss = loss_function(outputs, y)
@@ -105,45 +106,29 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
 
         tb.add_scalar("Training Loss", train_loss[-1], epoch)
 
-        tb.add_histogram("conv1.bias", net.conv_1.bias, epoch)
-        tb.add_histogram("conv1.weight", net.conv_1.weight, epoch)
-        tb.add_histogram("conv2.bias", net.conv_2.bias, epoch)
-        tb.add_histogram("conv2.weight", net.conv_2.weight, epoch)
-
         # Evaluate, do not propagate gradients
         with torch.no_grad():
             net.eval()
             
             # Just load a single batch from the test loader
-            x, y, z = next(iter(test_loader))
+            x, y = next(iter(test_loader))
             
-            x = z.to(device)
+            x = x.to(device)
             y = y.to(device)
             
             outputs = net(x)
 
             # We save the latent variable and reconstruction for later use
             # we will need them on the CPU to plot
-            x_hat = outputs
-            #z = outputs['z'].cpu().numpy()
 
-            loss = loss_function(x_hat, x)
+            loss = loss_function(outputs, y)
 
             valid_loss.append(loss.item())
             tb.add_scalar("Validation Loss", valid_loss[-1], epoch)
 
         if epoch == 0:
             continue
-        # live plotting of the trainig curves and representation
-        #plot_autoencoder_stats(x=x.cpu(),
-        #                    x_hat=x_hat.cpu(),
-        #                    z=z,
-        #                    y=y,
-        #                    train_loss=train_loss,
-        #                    valid_loss=valid_loss,
-        #                    epoch=epoch,
-        #                    classes=classes,
-        #                    dimensionality_reduction_op = None) #lambda z: TSNE(n_components=2).fit_transform(z))
+            
         print("on epoch:",epoch)#,"training loss:"train_loss[-1],"and validation loss:",valid_loss[-1])
     tb.close()
     print(train_loss)
@@ -185,12 +170,12 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
 
 
     tb = SummaryWriter()
-    images, labels,_ = next(iter(train_loader))
-    images = images.to(device)
-    labels = labels.to(device)
-    grid = make_grid(images)
-    tb.add_image("images", grid)
-    tb.add_graph(vae, images)
+    #images, labels = next(iter(train_loader))
+    #images = images.to(device)
+    #labels = labels.to(device)
+    #grid = make_grid(images)
+    #tb.add_image("images", grid)
+    #tb.add_graph(vae, images)
     
     # training..
     epoch =0
@@ -201,7 +186,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         
         # Go through each batch in the training dataset using the loader
         # Note that y is not necessarily known as it is here
-        for x, y, z in train_loader:
+        for x, y in train_loader:
             x = x.to(device)
             y = y.to(device)
             
@@ -226,7 +211,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
             vae.eval()
             
             # Just load a single batch from the test loader
-            x, y, z = next(iter(test_loader))
+            x, y = next(iter(test_loader))
             x = x.to(device)
             y = y.to(device)
             

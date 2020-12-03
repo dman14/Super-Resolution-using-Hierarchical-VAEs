@@ -36,19 +36,17 @@ class CNN_SR(nn.Module):
         #height = 32 #trainset.data.shape[1] # change accordingly
         #width = 32 #trainset.data.shape[2] # change accordingly
         stride = 2 # [stride_height, stride_width]
-
-        padding_1 = 0  # to keep the same pixel size of the image (stride is 1 as well), // means floor
-        padding_2 = 0
-        padding_3 = 0
-
+        padding_1 = f_1 // 2 # to keep the same pixel size of the image (stride is 1 as well), // means floor
+        padding_2 = f_2 // 2
+        padding_3 = f_3 // 2
         #-------------------------------------------------------------------
         self.deconv_1   = ConvTranspose2d(in_channels=channels,
                                 out_channels=n_2,
                                 kernel_size=f_3,
                                 stride=stride,
                                 padding=padding_3, output_padding= 1)
-        self.deconv1_out_height = compute_deconv_dim(height, f_3, padding_1, stride)
-        self.deconv1_out_width = compute_deconv_dim(width, f_3, padding_1, stride) 
+        self.deconv1_out_height = compute_deconv_dim(height, f_3, padding_3, stride)
+        self.deconv1_out_width = compute_deconv_dim(width, f_3, padding_3, stride) 
 
         self.deconv_2   = ConvTranspose2d(in_channels=n_2,
                                 out_channels=n_1,
@@ -63,8 +61,8 @@ class CNN_SR(nn.Module):
                                 kernel_size=f_1,
                                 stride=stride,
                                 padding=padding_1, output_padding= 1)
-        self.deconv1_out_height = compute_deconv_dim(self.deconv1_out_height, f_1, padding_3, stride)
-        self.deconv1_out_width = compute_deconv_dim(self.deconv1_out_width, f_1, padding_3, stride)
+        self.deconv1_out_height = compute_deconv_dim(self.deconv1_out_height, f_1, padding_1, stride)
+        self.deconv1_out_width = compute_deconv_dim(self.deconv1_out_width, f_1, padding_1, stride)
         
 
     def forward(self, x):

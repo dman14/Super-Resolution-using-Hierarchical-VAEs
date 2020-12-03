@@ -62,6 +62,8 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
 
     tb = SummaryWriter()
     images, labels,_ = next(iter(train_loader))
+    images = images.to(device)
+    labels = labels.to(device)
     grid = make_grid(images)
     tb.add_image("images", grid)
     tb.add_graph(net, images)

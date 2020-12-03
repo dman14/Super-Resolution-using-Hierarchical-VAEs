@@ -13,7 +13,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 
 def compute_deconv_dim(dim_size, kernel_size, padding, stride):
-    return int(stride * (dim_size - 1) + kernel_size - 2 * padding)
+    return int(stride * (dim_size - 1) + kernel_size - 2 * padding + 1)
     #return int((dim_size-1)*stride -2*padding + (kernel_size-1) +1)
     
 def compute_conv_dim(dim_size, kernel_size, padding, stride):
@@ -44,19 +44,19 @@ class CNN_SR(nn.Module):
                                out_channels=n_1,
                                kernel_size=f_1,
                                stride=1,
-                               padding=0)
-        self.conv1_out_height = compute_conv_dim(height, f_1, 0, 1)
-        self.conv1_out_width = compute_conv_dim(width, f_1, 0, 1)
+                               padding=padding_1)
+        self.conv1_out_height = compute_conv_dim(height, f_1, padding_1, 1)
+        self.conv1_out_width = compute_conv_dim(width, f_1, padding_1, 1)
 
         # Non-linear mapping layer 
         self.conv_2   = Conv2d(in_channels=n_1,
                                out_channels=n_2,
                                kernel_size=f_2,
                                stride=1,
-                               padding=0)
+                               padding=padding_2)
         
-        self.conv2_out_height = compute_conv_dim(self.conv1_out_height, f_2, 0, 1)
-        self.conv2_out_width = compute_conv_dim(self.conv1_out_width, f_2, 0, 1)
+        self.conv2_out_height = compute_conv_dim(self.conv1_out_height, f_2, padding_2, 1)
+        self.conv2_out_width = compute_conv_dim(self.conv1_out_width, f_2, padding_2, 1)
 
         
         # Reconstruction layer
@@ -64,10 +64,11 @@ class CNN_SR(nn.Module):
                                out_channels=channels,
                                kernel_size=f_3,
                                stride=1,
-                               padding=0)
+                               padding=padding_3)
 
-        self.conv3_out_height = compute_conv_dim(self.conv2_out_height, f_3, 0, 1)
-        self.conv3_out_width = compute_conv_dim(self.conv2_out_width, f_3, 0, 1)
+        self.conv3_out_height = compute_conv_dim(self.conv2_out_height, f_3, padding_3, 1)
+        self.conv3_out_width = compute_conv_dim(self.conv2_out_width, f_3, padding_3, 1)
+        print(self.conv3_out_height)
         #------------------------------------------------------------------------------
                                
         self.deconv_1   = ConvTranspose2d(in_channels=channels,
@@ -78,35 +79,37 @@ class CNN_SR(nn.Module):
         self.deconv1_out_height = compute_deconv_dim(self.conv3_out_height, f_3, padding_3, stride)
         self.deconv1_out_width = compute_deconv_dim(self.conv3_out_width, f_3, padding_3, stride) 
 
-
+        print(self.deconv1_out_height)
          #-------------------------------------------------------------------
         self.conv_4   = Conv2d(in_channels=n_2,
                                out_channels=n_1,
                                kernel_size=f_1,
                                stride=1,
-                               padding=0)
-        self.conv4_out_height = compute_conv_dim(self.deconv1_out_height, f_1,  0, 1)
-        self.conv4_out_width = compute_conv_dim(self.deconv1_out_width, f_1,  0, 1)
+                               padding=padding_1)
+        self.conv4_out_height = compute_conv_dim(self.deconv1_out_height, f_1,  padding_1, 1)
+        self.conv4_out_width = compute_conv_dim(self.deconv1_out_width, f_1,  padding_1, 1)
 
         # Non-linear mapping layer 
         self.conv_5   = Conv2d(in_channels=n_1,
                                out_channels=n_2,
                                kernel_size=f_2,
                                stride=1,
-                               padding=0)
+                               padding=padding_2)
         
-        self.conv5_out_height = compute_conv_dim(self.conv4_out_height, f_2,  0, 1)
-        self.conv5_out_width = compute_conv_dim(self.conv4_out_width, f_2,  0, 1)
+        self.conv5_out_height = compute_conv_dim(self.conv4_out_height, f_2,  padding_2, 1)
+        self.conv5_out_width = compute_conv_dim(self.conv4_out_width, f_2,  padding_2, 1)
 
          # Reconstruction layer
         self.conv_6   = Conv2d(in_channels=n_2,
                                out_channels=channels,
                                kernel_size=f_3,
                                stride=1,
-                               padding=0)
+                               padding=padding_3)
 
-        self.conv6_out_height = compute_conv_dim(self.conv5_out_height, f_3,  0, 1)
-        self.conv6_out_width = compute_conv_dim(self.conv5_out_width, f_3,  0, 1)
+        self.conv6_out_height = compute_conv_dim(self.conv5_out_height, f_3,  padding_3, 1)
+        self.conv6_out_width = compute_conv_dim(self.conv5_out_width, f_3,  padding_3, 1)
+
+        print(self.conv6_out_height)
         #------------------------------------------------------------------------------
 
 
@@ -118,35 +121,37 @@ class CNN_SR(nn.Module):
         self.deconv2_out_height = compute_deconv_dim(self.conv6_out_height, f_2, padding_2, stride)
         self.deconv2_out_width = compute_deconv_dim(self.conv6_out_width, f_2, padding_2, stride) 
 
-
+        print(self.deconv2_out_height)
          #-------------------------------------------------------------------
         self.conv_7   = Conv2d(in_channels=n_1,
                                out_channels=n_1,
                                kernel_size=f_1,
                                stride=1,
-                               padding=0)
-        self.conv7_out_height = compute_conv_dim(self.deconv2_out_height, f_1,  0, 1)
-        self.conv7_out_width = compute_conv_dim(self.deconv2_out_width, f_1,  0, 1)
+                               padding=padding_1)
+        self.conv7_out_height = compute_conv_dim(self.deconv2_out_height, f_1,  padding_1, 1)
+        self.conv7_out_width = compute_conv_dim(self.deconv2_out_width, f_1,  padding_1, 1)
 
         # Non-linear mapping layer 
         self.conv_8   = Conv2d(in_channels=n_1,
                                out_channels=n_2,
                                kernel_size=f_2,
                                stride=1,
-                               padding=0)
+                               padding=padding_2)
         
-        self.conv8_out_height = compute_conv_dim(self.conv7_out_height, f_2,  0, 1)
-        self.conv8_out_width = compute_conv_dim(self.conv7_out_width, f_2,  0, 1)
+        self.conv8_out_height = compute_conv_dim(self.conv7_out_height, f_2,  padding_2, 1)
+        self.conv8_out_width = compute_conv_dim(self.conv7_out_width, f_2,  padding_2, 1)
 
          # Reconstruction layer
         self.conv_9   = Conv2d(in_channels=n_2,
                                out_channels=channels,
                                kernel_size=f_3,
                                stride=1,
-                               padding=0)
+                               padding=padding_3)
 
-        self.conv9_out_height = compute_conv_dim(self.conv8_out_height, f_3,  0, 1)
-        self.conv9_out_width = compute_conv_dim(self.conv8_out_width, f_3,  0, 1)
+        self.conv9_out_height = compute_conv_dim(self.conv8_out_height, f_3,  padding_3, 1)
+        self.conv9_out_width = compute_conv_dim(self.conv8_out_width, f_3,  padding_3, 1)
+
+        print(self.conv9_out_height)
         #------------------------------------------------------------------------------
 
 
@@ -158,35 +163,37 @@ class CNN_SR(nn.Module):
         self.deconv3_out_height = compute_deconv_dim(self.conv9_out_height, f_1, padding_1, stride)
         self.deconv3_out_width = compute_deconv_dim(self.conv9_out_height, f_1, padding_1, stride)
 
-
+        print(self.deconv3_out_height)
         #-------------------------------------------------------------------
         self.conv_10   = Conv2d(in_channels=channels,
                                out_channels=n_1,
                                kernel_size=f_1,
                                stride=1,
-                               padding=0)
-        self.conv10_out_height = compute_conv_dim(self.deconv3_out_height, f_1,  0, 1)
-        self.conv10_out_width = compute_conv_dim(self.deconv3_out_width, f_1,  0, 1)
+                               padding=padding_1)
+        self.conv10_out_height = compute_conv_dim(self.deconv3_out_height, f_1,  padding_1, 1)
+        self.conv10_out_width = compute_conv_dim(self.deconv3_out_width, f_1,  padding_1, 1)
 
         # Non-linear mapping layer 
         self.conv_11   = Conv2d(in_channels=n_1,
                                out_channels=n_2,
                                kernel_size=f_2,
                                stride=1,
-                               padding=0)
+                               padding=padding_2)
         
-        self.conv11_out_height = compute_conv_dim(self.conv10_out_height, f_2,  0, 1)
-        self.conv11_out_width = compute_conv_dim(self.conv10_out_width, f_2,  0, 1)
+        self.conv11_out_height = compute_conv_dim(self.conv10_out_height, f_2,  padding_2, 1)
+        self.conv11_out_width = compute_conv_dim(self.conv10_out_width, f_2,  padding_2, 1)
 
          # Reconstruction layer
         self.conv_12   = Conv2d(in_channels=n_2,
                                out_channels=channels,
                                kernel_size=f_3,
                                stride=1,
-                               padding=0)
+                               padding=padding_3)
 
-        self.conv12_out_height = compute_conv_dim(self.conv11_out_height, f_3,  0, 1)
-        self.conv12_out_width = compute_conv_dim(self.conv11_out_width, f_3,  0, 1)
+        self.conv12_out_height = compute_conv_dim(self.conv11_out_height, f_3,  padding_3, 1)
+        self.conv12_out_width = compute_conv_dim(self.conv11_out_width, f_3,  padding_3, 1)
+
+        print(self.conv12_out_height)
         #------------------------------------------------------------------------------
         
 

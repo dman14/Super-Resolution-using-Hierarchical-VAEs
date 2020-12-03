@@ -59,9 +59,10 @@ def test_network(net, trainloader):
 def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     tb = SummaryWriter()
     images, labels,_ = next(iter(train_loader))
-    grid = torchvision.utils.make_grid(images)
+    grid = make_grid(images)
     tb.add_image("images", grid)
     tb.add_graph(model, images)
 

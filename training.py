@@ -103,7 +103,7 @@ def training_cnn(net, train_loader, test_loader, num_epochs = 100 ):
         train_loss.append(np.mean(batch_loss))
 
 
-        tb.add_scalar("Training Loss", train_loss[[-1]], epoch)
+        tb.add_scalar("Training Loss", train_loss[-1], epoch)
 
         tb.add_histogram("conv1.bias", net.conv_1.bias, epoch)
         tb.add_histogram("conv1.weight", net.conv_1.weight, epoch)

@@ -12,8 +12,8 @@ from torch.nn.functional import relu, elu, relu6, sigmoid, tanh, softmax
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 
-def compute_deconv_dim(dim_size, kernel_size, padding, stride):
-    return int(stride * (dim_size - 1) + kernel_size - 2 * padding + 1)
+def compute_deconv_dim(dim_size, kernel_size, padding, stride,outpad):
+    return int(stride * (dim_size - 1) + kernel_size - 2 * padding + outpad)
     #return int((dim_size-1)*stride -2*padding + (kernel_size-1) +1)
     
 def compute_conv_dim(dim_size, kernel_size, padding, stride):
@@ -39,35 +39,25 @@ class CNN_SR(nn.Module):
         padding_1 = f_1 // 2 # to keep the same pixel size of the image (stride is 1 as well), // means floor
         padding_2 = f_2 // 2
         padding_3 = f_3 // 2
-        #-------------------------------------------------------------------
-        self.conv_1   = Conv2d(in_channels=channels,
-                               out_channels=n_1,
-                               kernel_size=f_1,
-                               stride=1,
-                               padding=padding_1)
-        self.conv1_out_height = compute_conv_dim(height, f_1, padding_1, 1)
-        self.conv1_out_width = compute_conv_dim(width, f_1, padding_1, 1)
 
+        f_1 = 8
+        f_2 = 2
+        f_3 = 6
+        padding_1 = 3
+        #-------------------------------------------------------------------
         #------------------------------------------------------------------------------
+
                                
         self.deconv_1   = ConvTranspose2d(in_channels=channels,
                                 out_channels=n_1,
                                 kernel_size=f_3,
                                 stride=stride,
-                                padding=padding_3, output_padding= 1)
-        self.deconv1_out_height = compute_deconv_dim(self.conv1_out_height, f_3, padding_3, stride)
-        self.deconv1_out_width = compute_deconv_dim(self.conv1_out_width, f_3, padding_3, stride) 
+                                padding=padding_3, output_padding= 0)
+        self.deconv1_out_height = compute_deconv_dim(height, f_3, padding_3, stride,0)
+        self.deconv1_out_width = compute_deconv_dim(width, f_3, padding_3, stride,0) 
 
         print(self.deconv1_out_height)
          #-------------------------------------------------------------------
-        self.conv_2   = Conv2d(in_channels=n_1,
-                               out_channels=n_2,
-                               kernel_size=f_1,
-                               stride=1,
-                               padding=padding_1)
-        self.conv2_out_height = compute_conv_dim(self.deconv1_out_height, f_1,  padding_1, 1)
-        self.conv2_out_width = compute_conv_dim(self.deconv1_out_width, f_1,  padding_1, 1)
-
         #------------------------------------------------------------------------------
 
 
@@ -75,20 +65,12 @@ class CNN_SR(nn.Module):
                                 out_channels=n_2,
                                 kernel_size=f_2,
                                 stride=stride,
-                                padding=padding_2, output_padding=1)
-        self.deconv2_out_height = compute_deconv_dim(self.conv2_out_height, f_2, padding_2, stride)
-        self.deconv2_out_width = compute_deconv_dim(self.conv2_out_width, f_2, padding_2, stride) 
+                                padding=padding_2, output_padding=0)
+        self.deconv2_out_height = compute_deconv_dim(self.deconv1_out_height, f_2, padding_2, stride,0)
+        self.deconv2_out_width = compute_deconv_dim(self.deconv1_out_width, f_2, padding_2, stride,0) 
 
         print(self.deconv2_out_height)
          #-------------------------------------------------------------------
-        self.conv_3   = Conv2d(in_channels=n_2,
-                               out_channels=n_1,
-                               kernel_size=f_1,
-                               stride=1,
-                               padding=padding_1)
-        self.conv3_out_height = compute_conv_dim(self.deconv2_out_height, f_1,  padding_1, 1)
-        self.conv3_out_width = compute_conv_dim(self.deconv2_out_width, f_1,  padding_1, 1)
-
         #------------------------------------------------------------------------------
 
 
@@ -97,27 +79,24 @@ class CNN_SR(nn.Module):
                                 kernel_size=f_1,
                                 stride=stride,
                                 padding=padding_1, output_padding= 1)
-        self.deconv3_out_height = compute_deconv_dim(self.conv3_out_height, f_1, padding_1, stride)
-        self.deconv3_out_width = compute_deconv_dim(self.conv3_out_height, f_1, padding_1, stride)
+        self.deconv3_out_height = compute_deconv_dim(self.deconv2_out_height, f_1, padding_1, stride,0)
+        self.deconv3_out_width = compute_deconv_dim(self.deconv2_out_width, f_1, padding_1, stride,0)
 
         print(self.deconv3_out_height)
         #-------------------------------------------------------------------
         self.conv_4   = Conv2d(in_channels=channels,
                                out_channels=channels,
-                               kernel_size=f_1,
+                               kernel_size=f_2,
                                stride=1,
-                               padding=padding_1)
+                               padding=padding_2)
         self.conv4_out_height = compute_conv_dim(self.deconv3_out_height, f_1,  padding_1, 1)
         self.conv4_out_width = compute_conv_dim(self.deconv3_out_width, f_1,  padding_1, 1)
         #------------------------------------------------------------------------------
         
 
     def forward(self, x):
-        #x = relu(self.conv_1(x))
         x = relu(self.deconv_1(x))
-        #x = relu(self.conv_2(x))
         x = relu(self.deconv_2(x))
-        #x = relu(self.conv_3(x))
         x = relu(self.deconv_3(x))
         x = self.conv_4(x)
         return x 

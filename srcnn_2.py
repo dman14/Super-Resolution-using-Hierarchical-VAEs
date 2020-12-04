@@ -50,7 +50,7 @@ class CNN_SR(nn.Module):
 
         #------------------------------------------------------------------------------
                                
-        self.deconv_1   = ConvTranspose2d(in_channels=n_1,
+        self.deconv_1   = ConvTranspose2d(in_channels=channels,
                                 out_channels=n_1,
                                 kernel_size=f_3,
                                 stride=stride,
@@ -71,7 +71,7 @@ class CNN_SR(nn.Module):
         #------------------------------------------------------------------------------
 
 
-        self.deconv_2   = ConvTranspose2d(in_channels=n_2,
+        self.deconv_2   = ConvTranspose2d(in_channels=n_1,
                                 out_channels=n_2,
                                 kernel_size=f_2,
                                 stride=stride,
@@ -92,7 +92,7 @@ class CNN_SR(nn.Module):
         #------------------------------------------------------------------------------
 
 
-        self.deconv_3   = ConvTranspose2d(in_channels=n_1,
+        self.deconv_3   = ConvTranspose2d(in_channels=n_2,
                                 out_channels=channels,
                                 kernel_size=f_1,
                                 stride=stride,
@@ -113,11 +113,11 @@ class CNN_SR(nn.Module):
         
 
     def forward(self, x):
-        x = relu(self.conv_1(x))
+        #x = relu(self.conv_1(x))
         x = relu(self.deconv_1(x))
-        x = relu(self.conv_2(x))
+        #x = relu(self.conv_2(x))
         x = relu(self.deconv_2(x))
-        x = relu(self.conv_3(x))
+        #x = relu(self.conv_3(x))
         x = relu(self.deconv_3(x))
         x = self.conv_4(x)
         return x 

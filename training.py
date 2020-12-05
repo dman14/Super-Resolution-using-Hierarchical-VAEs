@@ -224,10 +224,10 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         # Reproduce the figure from the begining of the notebook, plot the training curves and show latent samples
         #make_vae_plots(vae, x, y, outputs, training_data, validation_data)
         
-        tb.add_scalar("Training Loss", training_data['elbo'][-1], epoch)
-        tb.add_scalar("Training Loss", training_data['kl'][-1], epoch)
-        tb.add_scalar("Training Loss", validation_data['elbo'][-1], epoch)
-        tb.add_scalar("Training Loss", validation_data['kl'][-1], epoch)
+        tb.add_scalar("Training elbo", training_data['elbo'][-1], epoch)
+        tb.add_scalar("Training kl", training_data['kl'][-1], epoch)
+        tb.add_scalar("Validation elbo", validation_data['elbo'][-1], epoch)
+        tb.add_scalar("Validation kl", validation_data['kl'][-1], epoch)
 
         print("epoch:",epoch)
     return vae

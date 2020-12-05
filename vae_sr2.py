@@ -190,6 +190,10 @@ class VariationalAutoencoder(nn.Module):
         h_y = self.prior_nn(y)
         mu, log_sigma = h_y.chunk(2, dim=1)
         log_sigma2 = torch.zeros(torch.Size(log_sigma.shape))
+        
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+        log_sigma2 = log_sigma2.to(device)
         # return the distribution `p(z)`
         return ReparameterizedDiagonalGaussian(mu, log_sigma2)
 

@@ -89,8 +89,8 @@ class CNN_SR(nn.Module):
                                kernel_size=f_2,
                                stride=1,
                                padding=padding_2)
-        self.conv4_out_height = compute_conv_dim(self.deconv3_out_height, f_1,  padding_1, 1)
-        self.conv4_out_width = compute_conv_dim(self.deconv3_out_width, f_1,  padding_1, 1)
+        self.conv4_out_height = compute_conv_dim(self.deconv3_out_height, f_2,  padding_2, 1)
+        self.conv4_out_width = compute_conv_dim(self.deconv3_out_width, f_2,  padding_2, 1)
         #------------------------------------------------------------------------------
         
 

@@ -15,7 +15,7 @@ from collections import defaultdict
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 
-from git.vae_sr import *
+from git.vae_sr2 import *
 
 def training_init(net):
 
@@ -141,7 +141,7 @@ def vae_init(dataloader):
 
     # VAE
     latent_features = 24
-    vae = VariationalAutoencoder(images[0].shape, latent_features)
+    vae = VariationalAutoencoder(low_res[0].shape, latent_features)
 
     # Evaluator: Variational Inference
     beta = 1
@@ -223,13 +223,7 @@ def training_vae(train_loader, test_loader, num_epochs = 100 ):
         
         # Reproduce the figure from the begining of the notebook, plot the training curves and show latent samples
         #make_vae_plots(vae, x, y, outputs, training_data, validation_data)
-        if a==0:
-            plt.ion()
-            fig, axes = plt.subplots(1, 2, figsize=(13,5), squeeze=False)
-            a=1
-            ax = axes[0, 0]
-            ax2 = axes[0, 1]
-
+        
         tb.add_scalar("Training Loss", training_data['elbo'][-1], epoch)
         tb.add_scalar("Training Loss", training_data['kl'][-1], epoch)
         tb.add_scalar("Training Loss", validation_data['elbo'][-1], epoch)

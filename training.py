@@ -144,7 +144,7 @@ def vae_init(dataloader):
     vae = VariationalAutoencoder(low_res[0].shape, latent_features)
 
     # Evaluator: Variational Inference
-    beta = 1
+    beta = 0.8
     vi = VariationalInference(beta=beta)
 
     # The Adam optimizer works really well with VAEs.

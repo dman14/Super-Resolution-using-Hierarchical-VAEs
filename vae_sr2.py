@@ -189,9 +189,9 @@ class VariationalAutoencoder(nn.Module):
     def prior_sr(self, y:Tensor) -> Distribution:
         h_y = self.prior_nn(y)
         mu, log_sigma = h_y.chunk(2, dim=1)
-        
+        log_sigma2 = torch.zeros(torch.Size(log_sigma.shape))
         # return the distribution `p(z)`
-        return ReparameterizedDiagonalGaussian(mu, log_sigma)
+        return ReparameterizedDiagonalGaussian(mu, log_sigma2)
 
     
     def observation_model(self, z:Tensor) -> Distribution:
@@ -235,7 +235,7 @@ class VariationalAutoencoder(nn.Module):
         z = qz.rsample()
         
         # define the observation model p(x|z) = B(x | g(z))
-        px = self.observation_model_normal(zy)#+z)
+        px = self.observation_model_normal(zy+z)
         
         return {'px': px, 'pz': pz, 'qz': qz, 'z': z}
     

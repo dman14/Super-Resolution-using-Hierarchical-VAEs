@@ -1,24 +1,24 @@
 import torch
 import numpy as np
-from mpi4py import MPI
 import socket
 import argparse
 import os
 import json
 import subprocess
-from hps import Hyperparams, parse_args_and_update_hparams, add_vae_arguments
-from utils import (logger,
+from git.vdvae.hps import Hyperparams, parse_args_and_update_hparams, add_vae_arguments
+from git.vdvae.utils import (logger,
                    local_mpi_rank,
                    mpi_size,
                    maybe_download,
                    mpi_rank)
-from data import mkdir_p
+from git.vdvae.data import mkdir_p
 from contextlib import contextmanager
 import torch.distributed as dist
-from apex.optimizers import FusedAdam as AdamW
-from vae import VAE
+#from apex.optimizers import FusedAdam as AdamW
+from git.vdvae.vae import VAE
 from torch.nn.parallel.distributed import DistributedDataParallel
 
+import torch.optim as optim
 
 def update_ema(vae, ema_vae, ema_rate):
     for p1, p2 in zip(vae.parameters(), ema_vae.parameters()):
@@ -72,10 +72,12 @@ def setup_mpi(H):
     os.environ["RANK"] = str(H.rank)
     os.environ["WORLD_SIZE"] = str(H.mpi_size)
     os.environ["MASTER_PORT"] = str(H.port)
-    # os.environ["NCCL_LL_THRESHOLD"] = "0"
-    os.environ["MASTER_ADDR"] = MPI.COMM_WORLD.bcast(socket.gethostname(), root=0)
-    torch.cuda.set_device(H.local_rank)
-    dist.init_process_group(backend='nccl', init_method=f"env://")
+    os.environ["NCCL_LL_THRESHOLD"] = "0"
+    #os.environ["MASTER_ADDR"] = MPI.COMM_WORLD.bcast(socket.gethostname(), root=0)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if device == "cuda:0":
+        torch.cuda.set_device(H.local_rank)
+    #dist.init_process_group(backend='nccl', init_method=f"env://")
 
 
 def distributed_maybe_download(path, local_rank, mpi_size):
@@ -176,7 +178,7 @@ def load_vaes(H, logprint):
 
 
 def load_opt(H, vae, logprint):
-    optimizer = AdamW(vae.parameters(), weight_decay=H.wd, lr=H.lr, betas=(H.adam_beta1, H.adam_beta2))
+    optimizer = torch.optim.Adam(vae.parameters(), weight_decay=H.wd, lr=H.lr, betas=(H.adam_beta1, H.adam_beta2))
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=linear_warmup(H.warmup_iters))
 
     if H.restore_optimizer_path:

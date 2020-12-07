@@ -68,6 +68,26 @@ def rescale_low(image, scale=4):
   return(lr,hr)
 
 
+def rescale_single(image, scale=4):
+  to_pil_image = transforms.ToPILImage()
+  
+  hr = to_pil_image(image)
+  hr_width = (hr.width // scale) * scale
+  hr_height = (hr.height // scale) * scale
+  hr = hr.resize((hr_width, hr_height), resample=pil_image.BICUBIC)
+  lr = hr.resize((hr_width // scale, hr_height // scale), resample=pil_image.BICUBIC)
+  lr = lr.resize((lr.width * scale, lr.height * scale), resample=pil_image.BICUBIC)
+
+  pil_to_tensor = transforms.ToTensor()(hr).unsqueeze_(0)
+  tensor_to_pil = transforms.ToPILImage()(pil_to_tensor.squeeze_(0))
+  hr = pil_to_tensor
+
+  pil_to_tensor2 = transforms.ToTensor()(lr).unsqueeze_(0)
+  tensor_to_pil2 = transforms.ToPILImage()(pil_to_tensor2.squeeze_(0))
+  lr = pil_to_tensor2
+  return(hr)
+
+
 def get_conv(in_dim, out_dim, kernel_size, stride, padding, zero_bias=True, zero_weights=False, groups=1, scaled=False):
     c = nn.Conv2d(in_dim, out_dim, kernel_size, stride, padding, groups=groups)
     if zero_bias:

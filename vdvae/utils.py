@@ -1,4 +1,3 @@
-from mpi4py import MPI
 import os
 import json
 import tempfile
@@ -115,11 +114,11 @@ def tile_images(images, d1=4, d2=4, border=1):
 
 
 def mpi_size():
-    return MPI.COMM_WORLD.Get_size()
+    return 1
 
 
 def mpi_rank():
-    return MPI.COMM_WORLD.Get_rank()
+    return 0
 
 
 def num_nodes():

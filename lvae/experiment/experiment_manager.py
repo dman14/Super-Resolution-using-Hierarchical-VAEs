@@ -411,6 +411,8 @@ class LVAEExperiment(VAEExperimentManager):
             'elbo/kl': results['kl'].item(),
             'l2/l2': results['l2'].item(),
         }
+        
+        
         if 'kl_avg_layerwise' in results:
             for i in range(len(results['kl_avg_layerwise'])):
                 key = 'kl_layers/kl_layer_{}'.format(i)

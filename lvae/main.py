@@ -4,8 +4,8 @@ from git.lvae.experiment import LVAEExperiment
 
 import argparse
 args = argparse.Namespace()
-args.test_imgs_every= 10000
-args.test_log_every = 1000
+args.test_imgs_every= 1000
+args.test_log_every = 100
 args.train_log_every= 1000
 args.max_grad_norm  = None
 args.loglikelihood_every = 1000
@@ -16,7 +16,6 @@ args.dropout = 0.2
 args.free_bits = 0.2
 args.no_batch_norm = False
 args.likelihood = "gaussian"
-#args.dataset_name = "static_mnist"
 args.dataset_name = "used_sets"
 args.blocks_per_layer = 2
 args.n_filters = 64
@@ -41,8 +40,9 @@ args.no_initial_downscaling = True
 args.analytical_kl = True
 args.simple_data_dependent_init = True
 args.lr = 3e-4
-args.max_epochs = 1000
-args.max_steps = 500
+args.max_epochs = 5000
+args.max_steps = 5000
+args.have_tensorboard = True
 
 def main():
     experiment = LVAEExperiment(args)

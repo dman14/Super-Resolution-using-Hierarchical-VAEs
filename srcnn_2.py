@@ -53,50 +53,50 @@ class CNN_SR(nn.Module):
                                 kernel_size=f_3,
                                 stride=stride,
                                 padding=padding_3, output_padding= 0)
-        self.deconv1_out_height = compute_deconv_dim(height, f_3, padding_3, stride,0)
-        self.deconv1_out_width = compute_deconv_dim(width, f_3, padding_3, stride,0) 
+        #self.deconv1_out_height = compute_deconv_dim(height, f_3, padding_3, stride,0)
+        #self.deconv1_out_width = compute_deconv_dim(width, f_3, padding_3, stride,0) 
 
-        print(self.deconv1_out_height)
+        #print(self.deconv1_out_height)
+        #-------------------------------------------------------------------
+        #------------------------------------------------------------------------------
+
+
+        #self.deconv_2   = ConvTranspose2d(in_channels=n_1,
+        #                        out_channels=n_2,
+        #                        kernel_size=f_2,
+        #                        stride=stride,
+        #                        padding=padding_2, output_padding=0)
+        #self.deconv2_out_height = compute_deconv_dim(self.deconv1_out_height, f_2, padding_2, stride,0)
+        #self.deconv2_out_width = compute_deconv_dim(self.deconv1_out_width, f_2, padding_2, stride,0) 
+
+        #print(self.deconv2_out_height)
          #-------------------------------------------------------------------
         #------------------------------------------------------------------------------
 
 
-        self.deconv_2   = ConvTranspose2d(in_channels=n_1,
-                                out_channels=n_2,
-                                kernel_size=f_2,
-                                stride=stride,
-                                padding=padding_2, output_padding=0)
-        self.deconv2_out_height = compute_deconv_dim(self.deconv1_out_height, f_2, padding_2, stride,0)
-        self.deconv2_out_width = compute_deconv_dim(self.deconv1_out_width, f_2, padding_2, stride,0) 
-
-        print(self.deconv2_out_height)
-         #-------------------------------------------------------------------
-        #------------------------------------------------------------------------------
-
-
-        self.deconv_3   = ConvTranspose2d(in_channels=n_2,
+        self.deconv_3   = ConvTranspose2d(in_channels=n_1,
                                 out_channels=channels,
                                 kernel_size=f_1,
                                 stride=stride,
                                 padding=padding_1, output_padding= 1)
-        self.deconv3_out_height = compute_deconv_dim(self.deconv2_out_height, f_1, padding_1, stride,0)
-        self.deconv3_out_width = compute_deconv_dim(self.deconv2_out_width, f_1, padding_1, stride,0)
+        #self.deconv3_out_height = compute_deconv_dim(self.deconv2_out_height, f_1, padding_1, stride,0)
+        #self.deconv3_out_width = compute_deconv_dim(self.deconv2_out_width, f_1, padding_1, stride,0)
 
-        print(self.deconv3_out_height)
+        #print(self.deconv3_out_height)
         #-------------------------------------------------------------------
         self.conv_4   = Conv2d(in_channels=channels,
                                out_channels=channels,
                                kernel_size=f_2,
                                stride=1,
                                padding=padding_2)
-        self.conv4_out_height = compute_conv_dim(self.deconv3_out_height, f_2,  padding_2, 1)
-        self.conv4_out_width = compute_conv_dim(self.deconv3_out_width, f_2,  padding_2, 1)
+        #self.conv4_out_height = compute_conv_dim(self.deconv3_out_height, f_2,  padding_2, 1)
+        #self.conv4_out_width = compute_conv_dim(self.deconv3_out_width, f_2,  padding_2, 1)
         #------------------------------------------------------------------------------
         
 
     def forward(self, x):
         x = relu(self.deconv_1(x))
-        x = relu(self.deconv_2(x))
+        #x = relu(self.deconv_2(x))
         x = relu(self.deconv_3(x))
         x = self.conv_4(x)
         return x 

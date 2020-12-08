@@ -13,10 +13,13 @@ from torchvision import datasets, transforms
 from git.helper import *
 
 
-transform = transforms.Compose([transforms.Resize(255),
-                                 transforms.CenterCrop(224),
-                                 transforms.ToTensor()])
+#transform = transforms.Compose([transforms.Resize(255),
+#                                 transforms.CenterCrop(224),
+#                                 transforms.ToTensor()])
 
+transform = transforms.Compose([transforms.Resize(100),
+                                 transforms.CenterCrop(96),
+                                 transforms.ToTensor()])
 
 def init_dataloader_upscaled(train_path, test_path, batch_size = 32, scale = 4):
 

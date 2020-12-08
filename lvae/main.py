@@ -6,7 +6,7 @@ import argparse
 args = argparse.Namespace()
 args.test_imgs_every= 1000
 args.test_log_every = 100
-args.train_log_every= 1000
+args.train_log_every= 100
 args.max_grad_norm  = None
 args.loglikelihood_every = 1000
 args.z_dims = [32,32,32]

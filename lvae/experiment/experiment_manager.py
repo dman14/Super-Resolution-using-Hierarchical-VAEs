@@ -13,7 +13,8 @@ from git.lvae.experiment.data import DatasetLoader
 
 boilr.set_options(model_print_depth=2)
 
-
+from git.helper import rescale_single_lr
+import numpy as np
 
 class LVAEExperiment(VAEExperimentManager):
     """
@@ -327,8 +328,17 @@ class LVAEExperiment(VAEExperimentManager):
                      y: Optional[torch.Tensor] = None) -> dict:
 
         # Forward pass
+        lr = []
+
+        for i in range(0,x.shape[0]):
+            lr.append(rescale_single_lr(x[i], scale=4))
+        #lr = torch.cat(lr, dim=0)
+        lr = torch.stack(lr)
+        
         x = x.to(self.device, non_blocking=True)
-        model_out = self.model(x)
+        lr= lr.to(self.device, non_blocking=True)
+        
+        model_out = self.model(x,lr)
         recons_sep = -model_out['ll']
         kl_sep = model_out['kl_sep']
         kl = model_out['kl']

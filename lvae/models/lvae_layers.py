@@ -120,7 +120,8 @@ class TopDownLayer(nn.Module):
                 n_img_prior=None,
                 forced_latent=None,
                 use_mode=False,
-                force_constant_output=False):
+                force_constant_output=False,
+                lr = None):
 
         # Check consistency of arguments
         inputs_none = input_ is None and skip_connection_input is None
@@ -150,6 +151,10 @@ class TopDownLayer(nn.Module):
         # In generative mode, q is not used
         else:
             q_params = None
+
+        if self.is_top_layer:
+            if lr is not None:
+                q_params = lr
 
         # Sample from either q(z_i | z_{i+1}, x) or p(z_i | z_{i+1})
         # depending on whether q_params is None

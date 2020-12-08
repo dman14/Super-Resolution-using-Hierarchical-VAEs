@@ -82,10 +82,22 @@ class LadderVAE(BaseGenerativeModel):
                 dropout=dropout,
                 res_block_type=res_block_type,
             ))
+        self.lr_NN = nn.Sequential(
+            nn.Conv2d(color_ch, n_filters, 5, padding=2, stride=stride),
+            nonlin(),
+            BottomUpDeterministicResBlock(
+                c_in=n_filters,
+                c_out=n_filters,
+                nonlin=nonlin,
+                batchnorm=batchnorm,
+                dropout=dropout,
+                res_block_type=res_block_type,
+            ))
 
         # Init lists of layers
         self.top_down_layers = nn.ModuleList([])
         self.bottom_up_layers = nn.ModuleList([])
+        self.top_down_SR = nn.ModuleList([])
 
         for i in range(self.n_layers):
 
@@ -137,6 +149,24 @@ class LadderVAE(BaseGenerativeModel):
                     gated=gated,
                     analytical_kl=analytical_kl,
                 ))
+            self.top_down_SR.append(
+                TopDownLayer(
+                    z_dim=z_dims[i],
+                    n_res_blocks=blocks_per_layer,
+                    n_filters=n_filters,
+                    is_top_layer=is_top,
+                    downsampling_steps=downsample[i],
+                    nonlin=nonlin,
+                    merge_type=merge_type,
+                    batchnorm=batchnorm,
+                    dropout=dropout,
+                    stochastic_skip=stochastic_skip,
+                    learn_top_prior=learn_top_prior,
+                    top_prior_param_shape=self.get_top_prior_param_shape(),
+                    res_block_type=res_block_type,
+                    gated=gated,
+                    analytical_kl=analytical_kl,
+                ))
 
         # Final top-down layer
         modules = list()
@@ -169,7 +199,7 @@ class LadderVAE(BaseGenerativeModel):
             msg = "Unrecognized likelihood '{}'".format(likelihood_form)
             raise RuntimeError(msg)
 
-    def forward(self, x):
+    def forward(self, x, lr= None):
         img_size = x.size()[2:]
 
         # Pad input to make everything easier with conv strides
@@ -178,8 +208,10 @@ class LadderVAE(BaseGenerativeModel):
         # Bottom-up inference: return list of length n_layers (bottom to top)
         bu_values = self.bottomup_pass(x_pad)
 
-        # Top-down inference/generation
-        out, td_data = self.topdown_pass(bu_values)
+        if lr is not None:
+            lr = self.lr_NN(lr)
+        # Top-down inference/generationF
+        out, td_data = self.topdown_pass(bu_values, lr)
 
         # Restore original image size
         out = crop_img_tensor(out, img_size)
@@ -228,6 +260,7 @@ class LadderVAE(BaseGenerativeModel):
 
     def topdown_pass(self,
                      bu_values=None,
+                     lr = None,
                      n_img_prior=None,
                      mode_layers=None,
                      constant_layers=None,
@@ -271,6 +304,8 @@ class LadderVAE(BaseGenerativeModel):
 
         # Top-down inference/generation loop
         out = out_pre_residual = None
+        out_SR = None
+
         for i in reversed(range(self.n_layers)):
 
             # If available, get deterministic node from bottom-up inference
@@ -285,7 +320,6 @@ class LadderVAE(BaseGenerativeModel):
 
             # Input for skip connection
             skip_input = out  # TODO or out_pre_residual? or both?
-
             # Full top-down layer, including sampling and deterministic part
             out, out_pre_residual, aux = self.top_down_layers[i](
                 out,
@@ -297,7 +331,19 @@ class LadderVAE(BaseGenerativeModel):
                 force_constant_output=constant_out,
                 forced_latent=forced_latent[i],
             )
-            z[i] = aux['z']  # sampled variable at this layer (batch, ch, h, w)
+            out_SR, out_pre_residual_SR, aux_SR = self.top_down_SR[i](
+                out_SR,
+                skip_connection_input=skip_input,
+                inference_mode=False,
+                bu_value=None,
+                n_img_prior=n_img_prior,
+                use_mode=use_mode,
+                force_constant_output=constant_out,
+                forced_latent=forced_latent[i],
+                lr = lr
+            )
+            z[i] = aux['z'] + aux_SR['z']  # sampled variable at this layer (batch, ch, h, w)
+            #print('Z', i, 'dimensions:', z[i].shape)
             kl[i] = aux['kl_samplewise']  # (batch, )
             kl_spatial[i] = aux['kl_spatial']  # (batch, h, w)
             logprob_p += aux['logprob_p'].mean()  # mean over batch
@@ -352,6 +398,20 @@ class LadderVAE(BaseGenerativeModel):
 
         # Generate from prior
         out, _ = self.topdown_pass(n_img_prior=n_imgs,
+                                   mode_layers=mode_layers,
+                                   constant_layers=constant_layers)
+        out = crop_img_tensor(out, self.img_shape)
+
+        # Log likelihood and other info (per data point)
+        _, likelihood_data = self.likelihood(out, None)
+
+        return likelihood_data['sample']
+
+    def sample_prior_SR(self, n_img, mode_layers=None, constant_layers=None):
+
+        # Generate from prior
+        n_img = self.lr_NN(n_img)
+        out, _ = self.topdown_pass(n_img_prior=n_img,
                                    mode_layers=mode_layers,
                                    constant_layers=constant_layers)
         out = crop_img_tensor(out, self.img_shape)

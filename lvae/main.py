@@ -5,8 +5,8 @@ from git.lvae.experiment import LVAEExperiment
 import argparse
 args = argparse.Namespace()
 args.test_imgs_every= 1000
-args.test_log_every = 200
-args.train_log_every= 200
+args.test_log_every = 2
+args.train_log_every= 2
 args.max_grad_norm  = None
 args.loglikelihood_every = 1000
 args.loglikelihood_samples= 20
@@ -32,7 +32,7 @@ args.additional_descr = ""
 args.resume = ""
 
 
-args.checkpoint_every = 100000
+args.checkpoint_every = 6
 args.no_cuda = False
 args.dry_run = True
 args.batch_size = 32
@@ -42,10 +42,10 @@ args.no_initial_downscaling = True
 args.analytical_kl = True
 args.simple_data_dependent_init = True
 args.lr = 3e-4
-args.max_epochs = 10000
-args.max_steps = 200000
+args.max_epochs = 15000
+args.max_steps = 50000
 args.have_tensorboard = True
-#args.keep_checkpoint_max = True
+args.keep_checkpoint_max = True
 
 def main():
     experiment = LVAEExperiment(args)

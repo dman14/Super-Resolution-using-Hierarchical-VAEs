@@ -5,8 +5,8 @@ from git.lvae.experiment import LVAEExperiment
 import argparse
 args = argparse.Namespace()
 args.test_imgs_every= 1000
-args.test_log_every = 2
-args.train_log_every= 2
+args.test_log_every = 200
+args.train_log_every= 200
 args.max_grad_norm  = None
 args.loglikelihood_every = 1000
 args.loglikelihood_samples= 20
@@ -32,7 +32,7 @@ args.additional_descr = ""
 args.resume = ""
 
 
-args.checkpoint_every = 6
+args.checkpoint_every = 55000
 args.no_cuda = False
 args.dry_run = True
 args.batch_size = 32

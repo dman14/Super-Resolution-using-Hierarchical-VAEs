@@ -347,8 +347,8 @@ class LadderVAE(BaseGenerativeModel):
                 forced_latent=forced_latent[i],
                 lr = lr
             )
-            #out = out + out_SR
-            z[i] = aux['z'] + aux_SR['z']  # sampled variable at this layer (batch, ch, h, w)
+            out = out + out_SR
+            z[i] = aux['z'] #+ aux_SR['z']  # sampled variable at this layer (batch, ch, h, w)
             #print('Z', i, 'dimensions:', z[i].shape)
             kl[i] = aux['kl_samplewise']  # (batch, )
             kl_spatial[i] = aux['kl_spatial']  # (batch, h, w)

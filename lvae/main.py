@@ -5,11 +5,11 @@ from git.lvae.experiment import LVAEExperiment
 import argparse
 args = argparse.Namespace()
 args.test_imgs_every= 1000
-args.test_log_every = 100
-args.train_log_every= 100
+args.test_log_every = 200
+args.train_log_every= 200
 args.max_grad_norm  = None
 args.loglikelihood_every = 1000
-args.loglikelihood_samples= 100
+args.loglikelihood_samples= 20
 args.z_dims = [32,32,32,32]
 args.downsample = [1,0,1,0]
 args.weight_decay = 0.01
@@ -43,7 +43,7 @@ args.analytical_kl = True
 args.simple_data_dependent_init = True
 args.lr = 3e-4
 args.max_epochs = 5000
-args.max_steps = 5000
+args.max_steps = 3600
 args.have_tensorboard = True
 
 def main():

@@ -121,7 +121,7 @@ class Used_sets(TensorDataset):
         scale = 8
         batch_size = 32
         transform = transforms.Compose([transforms.Resize(100),
-                                 transforms.CenterCrop(64),
+                                 transforms.CenterCrop(96),
                                  transforms.ToTensor()])
         
         if split == "train" or split == "valid":

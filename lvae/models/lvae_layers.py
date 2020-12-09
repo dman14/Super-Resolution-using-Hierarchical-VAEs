@@ -131,14 +131,14 @@ class TopDownLayer(nn.Module):
         # If top layer, define parameters of prior p(z_L)
         if self.is_top_layer:
             if lr is not None:
-                mu,log_sigma = lr.chunk(2,dim=1)
-                log_sigma = torch.zeros(torch.Size(log_sigma.shape))
+                #mu,log_sigma = lr.chunk(2,dim=1)
+                #log_sigma = torch.zeros(torch.Size(log_sigma.shape))
                 
-                device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-                mu = mu.to(device)
-                log_sigma = log_sigma.to(device)
-                lr = torch.cat((mu,log_sigma),dim=1)
-                lr = lr.to(device)
+                #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+                #mu = mu.to(device)
+                #log_sigma = log_sigma.to(device)
+                #lr = torch.cat((mu,log_sigma),dim=1)
+                #lr = lr.to(device)
                 p_params = lr
             else:
                 p_params = self.top_prior_params

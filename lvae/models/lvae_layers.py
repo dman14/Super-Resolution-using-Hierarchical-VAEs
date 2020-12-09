@@ -131,6 +131,10 @@ class TopDownLayer(nn.Module):
         # If top layer, define parameters of prior p(z_L)
         if self.is_top_layer:
             if lr is not None:
+                mu,log_sigma = lr.chunk(2,dim=1)
+                log_sigma = torch.zeros(torch.Size(log_sigma.shape))
+                lr = torch.cat((mu,log_sigma),dim=1)
+                print("lr shape is",lr.shape)
                 p_params = lr
             else:
                 p_params = self.top_prior_params

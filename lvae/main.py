@@ -32,7 +32,7 @@ args.additional_descr = ""
 args.resume = ""
 
 
-args.checkpoint_every = 100000
+args.checkpoint_every = 10000
 args.no_cuda = False
 args.dry_run = True
 args.batch_size = 32
@@ -43,7 +43,7 @@ args.analytical_kl = True
 args.simple_data_dependent_init = True
 args.lr = 3e-4
 args.max_epochs = 10000
-args.max_steps = 10000
+args.max_steps = 100000
 args.have_tensorboard = True
 
 def main():

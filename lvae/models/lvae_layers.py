@@ -130,7 +130,10 @@ class TopDownLayer(nn.Module):
 
         # If top layer, define parameters of prior p(z_L)
         if self.is_top_layer:
-            p_params = self.top_prior_params
+            if lr is not None:
+                p_params = lr
+            else:
+                p_params = self.top_prior_params
 
             # Sample specific number of images by expanding the prior
             if n_img_prior is not None:
@@ -154,7 +157,7 @@ class TopDownLayer(nn.Module):
 
         if self.is_top_layer:
             if lr is not None:
-                q_params = lr
+                p_params = lr
 
         # Sample from either q(z_i | z_{i+1}, x) or p(z_i | z_{i+1})
         # depending on whether q_params is None

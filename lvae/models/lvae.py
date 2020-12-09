@@ -306,6 +306,10 @@ class LadderVAE(BaseGenerativeModel):
         out = out_pre_residual = None
         out_SR = None
 
+        if mode_layers is not None:
+            mode_layers = []
+            constant_layers = []
+            n_img_prior = None
         for i in reversed(range(self.n_layers)):
 
             # If available, get deterministic node from bottom-up inference
@@ -330,6 +334,7 @@ class LadderVAE(BaseGenerativeModel):
                 use_mode=use_mode,
                 force_constant_output=constant_out,
                 forced_latent=forced_latent[i],
+                lr = lr
             )
             out_SR, out_pre_residual_SR, aux_SR = self.top_down_SR[i](
                 out_SR,
@@ -342,6 +347,7 @@ class LadderVAE(BaseGenerativeModel):
                 forced_latent=forced_latent[i],
                 lr = lr
             )
+            #out = out + out_SR
             z[i] = aux['z'] + aux_SR['z']  # sampled variable at this layer (batch, ch, h, w)
             #print('Z', i, 'dimensions:', z[i].shape)
             kl[i] = aux['kl_samplewise']  # (batch, )
@@ -411,9 +417,10 @@ class LadderVAE(BaseGenerativeModel):
 
         # Generate from prior
         n_img = self.lr_NN(n_img)
-        out, _ = self.topdown_pass(n_img_prior=n_img,
-                                   mode_layers=mode_layers,
-                                   constant_layers=constant_layers)
+        out, _ = self.topdown_pass(n_img_prior=1,
+                                   lr = n_img,
+                                   mode_layers=[1,1],
+                                   constant_layers=[1,1])
         out = crop_img_tensor(out, self.img_shape)
 
         # Log likelihood and other info (per data point)

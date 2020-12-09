@@ -379,6 +379,20 @@ class LVAEExperiment(VAEExperimentManager):
 
         return output
 
+    def sample_from_prior_SR(self,
+                     lr: torch.Tensor):
+
+        
+        #lr = torch.stack(lr)
+        
+        lr= lr.to(self.device, non_blocking=True)
+
+        sample = self.model.sample_prior_SR(n_img= lr,
+                                            mode_layers= None,
+                                            constant_layers= None)
+
+        return sample
+
     @classmethod
     def train_log_str(cls,
                       summaries: dict,

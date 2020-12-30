@@ -7,7 +7,7 @@ from torch.utils.data import TensorDataset
 
 from torch import nn, Tensor
 from torchvision import datasets, transforms
-from git.helper import *
+from helper import *
 
 
 

@@ -12,7 +12,7 @@ from boilr.eval import BaseOfflineEvaluator
 from boilr.utils.viz import img_grid_pad_value
 from torchvision.utils import save_image
 
-from git.lvae.experiment.experiment_manager import LVAEExperiment
+from lvae.experiment.experiment_manager import LVAEExperiment
 
 
 class Evaluator(BaseOfflineEvaluator):

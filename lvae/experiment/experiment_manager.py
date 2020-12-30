@@ -8,12 +8,12 @@ from boilr.utils import linear_anneal
 from torch import optim
 from torch.optim.optimizer import Optimizer
 from typing import Optional
-from git.lvae.models.lvae import LadderVAE
-from git.lvae.experiment.data import DatasetLoader
+from lvae.models.lvae import LadderVAE
+from lvae.experiment.data import DatasetLoader
 
 boilr.set_options(model_print_depth=2)
 
-from git.helper import rescale_single_lr
+from helper import rescale_single_lr
 import numpy as np
 
 class LVAEExperiment(VAEExperimentManager):

@@ -1,6 +1,6 @@
 from boilr import Trainer
 
-from git.lvae.experiment import LVAEExperiment
+from lvae.experiment import LVAEExperiment
 
 import argparse
 args = argparse.Namespace()

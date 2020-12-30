@@ -1,8 +1,8 @@
 import torch
 from torch import nn
 
-from git.lvae.lib.nn import ResidualBlock, ResidualGatedBlock
-from git.lvae.lib.stochastic import NormalStochasticBlock2d
+from lvae.lib.nn import ResidualBlock, ResidualGatedBlock
+from lvae.lib.stochastic import NormalStochasticBlock2d
 
 
 class TopDownLayer(nn.Module):

@@ -1,1 +1,1 @@
-from git.lvae.experiment.experiment_manager import LVAEExperiment
+from lvae.experiment.experiment_manager import LVAEExperiment

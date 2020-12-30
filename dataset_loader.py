@@ -10,7 +10,7 @@ from torch import nn, Tensor
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-from git.helper import *
+from helper import *
 
 
 #transform = transforms.Compose([transforms.Resize(255),

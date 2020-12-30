@@ -3,9 +3,9 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.datasets import CIFAR10, SVHN, CelebA
 
-from git.lvae.lib.datasets import StaticBinaryMnist, Used_sets
-from git.dataset_loader import *
-from git.helper import *
+from lvae.lib.datasets import StaticBinaryMnist, Used_sets
+from dataset_loader import *
+from helper import *
 
 
 multiobject_paths = {

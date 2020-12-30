@@ -4,10 +4,10 @@ from boilr.models import BaseGenerativeModel
 from boilr.nn import crop_img_tensor, pad_img_tensor, Interpolate, free_bits_kl
 from torch import nn
 
-from git.lvae.lib.likelihoods import (BernoulliLikelihood, GaussianLikelihood,
+from lvae.lib.likelihoods import (BernoulliLikelihood, GaussianLikelihood,
                              DiscretizedLogisticLikelihood,
                              DiscretizedLogisticMixLikelihood)
-from git.lvae.models.lvae_layers import (TopDownLayer, BottomUpLayer,
+from lvae.models.lvae_layers import (TopDownLayer, BottomUpLayer,
                           TopDownDeterministicResBlock,
                           BottomUpDeterministicResBlock)
 

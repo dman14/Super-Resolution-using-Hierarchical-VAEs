@@ -15,7 +15,7 @@ from collections import defaultdict
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 
-from git.vae_sr2 import *
+from vae_sr2 import *
 
 def training_init(net):
 

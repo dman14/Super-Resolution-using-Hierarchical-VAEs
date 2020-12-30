@@ -7,7 +7,7 @@ from torch import nn
 from torch.distributions import Normal
 from torch.nn import functional as F
 
-from git.lvae.lib.stochastic import logistic_rsample, sample_from_discretized_mix_logistic
+from lvae.lib.stochastic import logistic_rsample, sample_from_discretized_mix_logistic
 
 
 class LikelihoodModule(nn.Module):

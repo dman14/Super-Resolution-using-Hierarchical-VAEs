@@ -1,0 +1,6 @@
+torch
+torchvision
+tensorboard==2.4.0
+imageio
+boilr
+multiobject==0.0.3

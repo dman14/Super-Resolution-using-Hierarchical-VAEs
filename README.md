@@ -14,6 +14,9 @@ The Project has three parts, those showing the progress up to the hierarchical V
 ## Usage
 To run any of the three models, the Operational IPytthon Notebooks can be run, each for their individual model.
 
+For the Training/Testing data, the datasets can be downloaded from [here](https://drive.google.com/drive/folders/1jHOhRjfZiLhNQc92vMqy0kLXROmfKjYn?usp=sharing).
+For Training the General100 dataset was used, while for Testing the Set14 was used.
+
 ## Results
 
 

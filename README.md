@@ -4,7 +4,7 @@
 ## Information
 The Poster for the presentation of the project can be found [here](https://drive.google.com/file/d/1N5F-27F1RnGEtdY9ZuWL3ira9WznA6m3/view?usp=sharing)
 
-The Report of the project can be seen here (ADD LINK AFTER DONE)
+The Report of the project can be seen [here](https://drive.google.com/file/d/1BQeY6sNe4wQNMIB6OoVSMkocq4E3UJOO/view?usp=sharing)
 
 ## Description
 The purpose of the project was to achieve and develop a super-resolution model based on a Hierarchical VAE, here the [Ladder VAE](https://github.com/addtt/ladder-vae-pytorch) implementation was used to build upon it.

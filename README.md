@@ -2,7 +2,7 @@
 02456 Deep learning, DTU Compute, Autumn 2020 Final Project
 
 ## Information
-The Poster for the presentation of the project can be found [here](https://drive.google.com/file/d/1PAjXkpzTdpXvj-FqD9X0VJgSfBkV3lkJ/view?usp=sharing)
+The Poster for the presentation of the project can be found [here](https://drive.google.com/file/d/1N5F-27F1RnGEtdY9ZuWL3ira9WznA6m3/view?usp=sharing)
 
 The Report of the project can be seen here (ADD LINK AFTER DONE)
 
